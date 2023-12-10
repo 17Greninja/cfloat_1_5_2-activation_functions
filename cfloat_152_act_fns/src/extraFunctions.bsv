@@ -1,4 +1,4 @@
-package common;
+package extraFunctions;
 
   /* returns the hiddenBit */
   function Bit#(1) hiddenBit(Bit#(5) exponent);

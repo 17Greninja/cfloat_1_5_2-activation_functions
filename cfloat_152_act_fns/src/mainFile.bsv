@@ -2,23 +2,65 @@
 main module
 */
 
-package activation_compute;
+package mainFile;
   import FIFOF :: *;
-  import common :: *;
+  import extraFunctions :: *;
   import SpecialFIFOs :: *;
-  import sigmoid_lut :: *;
-  import selu_lut :: *;
+  import sigmoid_lut_table :: *;
+  import selu_lut_table :: *;
   import Vector :: *;
   import GetPut :: *;
-  import types :: *;
   import FIFO :: *;
+
+  typedef struct {
+    Bit#(1) sign; // 1 - Negative, 0 - Positive
+    Bit#(5) exp;
+    Bit#(2) mantissa;
+  } Cfloat_1_5_2 deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Bool invalid;
+    Bool denormal;
+    Bool overflow;
+    Bool underflow;
+  } Flags deriving(Bits, Eq, FShow);
+
+  typedef enum {Tanh, Sigmoid, LeakyReLu, SeLu} Operation deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Cfloat_1_5_2 inp;
+    Int#(6) bias;
+    Operation op;
+  } PreprocessStageMeta deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Bit#(1) sign;
+    Int#(8) act_exp;
+    Bit#(3) act_mantissa;
+    Int#(6) bias;
+    Operation op;
+    Flags flags;
+  } ComputeStageMeta deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Bit#(1) final_sign;
+    Int#(8) exponent_final_output;
+    Bit#(4) mantissa_final_output;
+    Int#(6) bias;
+    Flags flags;
+  } PostprocessStageMeta deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Cfloat_1_5_2 out;
+    Flags flags;
+  } OutputStageMeta deriving(Bits, Eq, FShow);
 
   interface interface_activation_function_compute;
     method Action ma_input(Cfloat_1_5_2 inp, Int#(6) bias, Operation op);
     method ActionValue#(Maybe#(OutputStageMeta)) mav_output;
   endinterface: interface_activation_function_compute
 
-  module mkactivation_compute(interface_activation_function_compute);
+  module mkmainFile(interface_activation_function_compute);
     /* FIFO to store the inputs*/
     FIFOF#(PreprocessStageMeta) input_fifof <- mkFIFOF();
 

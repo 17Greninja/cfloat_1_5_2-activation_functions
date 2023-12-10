@@ -1,9 +1,51 @@
-package selu_lut;
+package selu_lut_table;
   import Vector :: *;
   import FIFOF :: *;
   import GetPut :: *;
-  import types :: *;
-  import common :: *;
+  import extraFunctions :: *;
+
+  typedef struct {
+    Bit#(1) sign; // 1 - Negative, 0 - Positive
+    Bit#(5) exp;
+    Bit#(2) mantissa;
+  } Cfloat_1_5_2 deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Bool invalid;
+    Bool denormal;
+    Bool overflow;
+    Bool underflow;
+  } Flags deriving(Bits, Eq, FShow);
+
+  typedef enum {Tanh, Sigmoid, LeakyReLu, SeLu} Operation deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Cfloat_1_5_2 inp;
+    Int#(6) bias;
+    Operation op;
+  } PreprocessStageMeta deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Bit#(1) sign;
+    Int#(8) act_exp;
+    Bit#(3) act_mantissa;
+    Int#(6) bias;
+    Operation op;
+    Flags flags;
+  } ComputeStageMeta deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Bit#(1) final_sign;
+    Int#(8) exponent_final_output;
+    Bit#(4) mantissa_final_output;
+    Int#(6) bias;
+    Flags flags;
+  } PostprocessStageMeta deriving(Bits, Eq, FShow);
+
+  typedef struct {
+    Cfloat_1_5_2 out;
+    Flags flags;
+  } OutputStageMeta deriving(Bits, Eq, FShow);
 
   interface interface_selu_lut_table_obs_1;
     method Tuple2#(Int#(7), Bit#(2)) mv_selu_output(Bit#(6) exp, Bit#(2) man);

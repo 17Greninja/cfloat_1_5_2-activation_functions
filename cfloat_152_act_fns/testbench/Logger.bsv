@@ -2,7 +2,7 @@
 // see LICENSE.iitm
 ////////////////////////////////////////////////////////////////////////////////
 /*
-Copy of Logger.bsv from common_bsv repository.
+Copy of Logger.bsv from extraFunctions_bsv repository.
 */
 `ifdef simulate
   `ifdef static_check
