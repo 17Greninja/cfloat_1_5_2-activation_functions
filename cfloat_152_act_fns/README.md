@@ -2,6 +2,4 @@
 
 tanh(x), sigmoid(x), ReLu(x) and SeLu(x)  - cfloat_1_5_2 datatype  
 
-## Sigmoid and Tanh implementation
-
 I have done LUT implementation of inputs indexing the LUT with outputs.
